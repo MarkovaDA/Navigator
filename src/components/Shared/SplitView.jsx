@@ -48,7 +48,7 @@ function SplitView({ left, right, initialLeftWidth = 280, minLeft = 180, minRigh
   return (
     <div
       ref={containerRef}
-      style={{ display: "flex", width: "100%", height: "100%" }}
+      style={{ display: "flex", width: "100%", height: "100vh" }}
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
@@ -62,7 +62,7 @@ function SplitView({ left, right, initialLeftWidth = 280, minLeft = 180, minRigh
         aria-orientation="vertical"
         onMouseDown={onMouseDown}
         style={{
-          width: "8px",
+          width: "2px",
           cursor: "col-resize",
           background: "#e5e7eb",
           borderLeft: "1px solid #d1d5db",

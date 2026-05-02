@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { getNodeIcon } from "@/utils/treeIcons";
+import ChevronRightRounded from "@mui/icons-material/ChevronRightRounded";
+import ExpandMoreRounded from "@mui/icons-material/ExpandMoreRounded";
+import { TreeNodeLeadingIcon } from "@/utils/treeIcons";
 import "./TreeView.css";
 
 function normalizeNodes(data) {
@@ -7,27 +9,57 @@ function normalizeNodes(data) {
   return Array.isArray(data) ? data : [data];
 }
 
+const treeIconSx = {
+  fontSize: 18,
+  color: "var(--tree-view-icon-muted, #5f6368)",
+  flexShrink: 0,
+};
+
 function TreeNode({ node, level = 0 }) {
   const children = Array.isArray(node.children) ? node.children : [];
   const hasChildren = children.length > 0;
   const [isOpen, setIsOpen] = useState(true);
-  const icon = getNodeIcon(node, hasChildren, isOpen);
 
   return (
-    <li className="tree-view__item">
+    <li className="tree-view__item" role="none">
       <div
         className={`tree-view__row${hasChildren ? " tree-view__row--clickable" : ""}`}
         onClick={() => hasChildren && setIsOpen((value) => !value)}
+        onKeyDown={(e) => {
+          if (!hasChildren) return;
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setIsOpen((value) => !value);
+          }
+        }}
         style={{ "--tree-level": level }}
+        role="treeitem"
+        tabIndex={0}
+        aria-expanded={hasChildren ? isOpen : undefined}
       >
-        <span className="tree-view__toggle">{hasChildren ? (isOpen ? "▾" : "▸") : ""}</span>
-        <span>
-          {icon} {node.name ?? "Без названия"}
+        <span className="tree-view__toggle" aria-hidden="true">
+          {hasChildren ? (
+            isOpen ? (
+              <ExpandMoreRounded sx={treeIconSx} />
+            ) : (
+              <ChevronRightRounded sx={treeIconSx} />
+            )
+          ) : (
+            <span className="tree-view__toggle-spacer" />
+          )}
         </span>
+        <span className="tree-view__icon-wrap" aria-hidden="true">
+          <TreeNodeLeadingIcon
+            node={node}
+            hasChildren={hasChildren}
+            isOpen={isOpen}
+          />
+        </span>
+        <span className="tree-view__label">{node.name ?? "Без названия"}</span>
       </div>
 
       {hasChildren && isOpen && (
-        <ul className="tree-view__list">
+        <ul className="tree-view__list" role="group">
           {children.map((child, index) => (
             <TreeNode
               key={child.id ?? `${child.name ?? "folder"}-${index}`}
@@ -49,7 +81,7 @@ function TreeView({ data }) {
   }
 
   return (
-    <ul className="tree-view__list">
+    <ul className="tree-view__list tree-view__root" role="tree">
       {nodes.map((node, index) => (
         <TreeNode key={node.id ?? `${node.name ?? "folder"}-${index}`} node={node} />
       ))}

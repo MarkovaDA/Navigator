@@ -1,5 +1,6 @@
-import SplitView from "./Shared/SplitView";
-import TreeView from "./Shared/TreeView";
+import SplitView from "../Shared/SplitView";
+import TreeView from "../Shared/TreeView";
+import "./Navigator.css";
 
 const demoTree = [
   {
@@ -110,7 +111,7 @@ const demoTree = [
 
 function Navigator() {
   return (
-    <div style={{ height: "100%" }}>
+    <div className="navigator">
       <SplitView
         left={
           <div>

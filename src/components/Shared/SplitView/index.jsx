@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import "./SplitView.css";
 
 function SplitView({ left, right, initialLeftWidth = 280, minLeft = 180, minRight = 220 }) {
   const containerRef = useRef(null);
@@ -48,30 +49,34 @@ function SplitView({ left, right, initialLeftWidth = 280, minLeft = 180, minRigh
   return (
     <div
       ref={containerRef}
-      style={{ display: "flex", width: "100%", height: "100vh" }}
+      className="split-view"
       onMouseMove={onMouseMove}
       onMouseUp={onMouseUp}
       onMouseLeave={onMouseUp}
     >
-      <div style={{ width: leftWidth, minWidth: minLeft, overflow: "auto", padding: "12px" }}>
+      <div
+        className="split-view__left"
+        style={{
+          "--split-left-width": `${leftWidth}px`,
+          "--split-min-left": `${minLeft}px`,
+        }}
+      >
         {left}
       </div>
 
       <div
         role="separator"
         aria-orientation="vertical"
+        className="split-view__separator"
         onMouseDown={onMouseDown}
-        style={{
-          width: "2px",
-          cursor: "col-resize",
-          background: "#e5e7eb",
-          borderLeft: "1px solid #d1d5db",
-          borderRight: "1px solid #d1d5db",
-          flexShrink: 0,
-        }}
       />
 
-      <div style={{ flex: 1, minWidth: minRight, overflow: "auto", padding: "12px" }}>{right}</div>
+      <div
+        className="split-view__right"
+        style={{ "--split-min-right": `${minRight}px` }}
+      >
+        {right}
+      </div>
     </div>
   );
 }

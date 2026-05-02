@@ -1,0 +1,32 @@
+.tree-view__list {
+  margin: 0;
+  padding: 0;
+}
+
+.tree-view__item {
+  list-style: none;
+}
+
+.tree-view__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  padding-left: calc(var(--tree-level, 0) * 14px);
+  user-select: none;
+  cursor: default;
+}
+
+.tree-view__row--clickable {
+  cursor: pointer;
+}
+
+.tree-view__toggle {
+  width: 12px;
+  color: #6b7280;
+}
+
+.tree-view__empty {
+  margin: 0;
+  color: #6b7280;
+}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { getNodeIcon } from "@/utils/treeIcons";
+import "./TreeView.css";
 
 function normalizeNodes(data) {
   if (!data) return [];
@@ -13,27 +14,20 @@ function TreeNode({ node, level = 0 }) {
   const icon = getNodeIcon(node, hasChildren, isOpen);
 
   return (
-    <li style={{ listStyle: "none" }}>
+    <li className="tree-view__item">
       <div
+        className={`tree-view__row${hasChildren ? " tree-view__row--clickable" : ""}`}
         onClick={() => hasChildren && setIsOpen((value) => !value)}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-          cursor: hasChildren ? "pointer" : "default",
-          padding: "4px 0",
-          paddingLeft: `${level * 14}px`,
-          userSelect: "none",
-        }}
+        style={{ "--tree-level": level }}
       >
-        <span style={{ width: "12px", color: "#6b7280" }}>{hasChildren ? (isOpen ? "▾" : "▸") : ""}</span>
+        <span className="tree-view__toggle">{hasChildren ? (isOpen ? "▾" : "▸") : ""}</span>
         <span>
           {icon} {node.name ?? "Без названия"}
         </span>
       </div>
 
       {hasChildren && isOpen && (
-        <ul style={{ margin: 0, padding: 0 }}>
+        <ul className="tree-view__list">
           {children.map((child, index) => (
             <TreeNode
               key={child.id ?? `${child.name ?? "folder"}-${index}`}
@@ -51,11 +45,11 @@ function TreeView({ data }) {
   const nodes = normalizeNodes(data);
 
   if (nodes.length === 0) {
-    return <p style={{ margin: 0, color: "#6b7280" }}>Нет папок для отображения.</p>;
+    return <p className="tree-view__empty">Нет папок для отображения.</p>;
   }
 
   return (
-    <ul style={{ margin: 0, padding: 0 }}>
+    <ul className="tree-view__list">
       {nodes.map((node, index) => (
         <TreeNode key={node.id ?? `${node.name ?? "folder"}-${index}`} node={node} />
       ))}
@@ -64,6 +58,3 @@ function TreeView({ data }) {
 }
 
 export default TreeView;
-
-
-

@@ -1,0 +1,28 @@
+.split-view {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+.split-view__left {
+  width: var(--split-left-width);
+  min-width: var(--split-min-left);
+  overflow: auto;
+  padding: 12px;
+}
+
+.split-view__separator {
+  width: 2px;
+  cursor: col-resize;
+  background: #e5e7eb;
+  border-left: 1px solid #d1d5db;
+  border-right: 1px solid #d1d5db;
+  flex-shrink: 0;
+}
+
+.split-view__right {
+  flex: 1;
+  min-width: var(--split-min-right);
+  overflow: auto;
+  padding: 12px;
+}

@@ -1,6 +1,9 @@
+import { useState } from "react";
 import SplitView from "../Shared/SplitView";
 import TreeView from "../Shared/TreeView";
+import FileExplorer from "../Shared/FileExplorer";
 import "./Navigator.css";
+
 
 const demoTree = [
   {
@@ -110,19 +113,30 @@ const demoTree = [
 ];
 
 function Navigator() {
+  const [selectedFolder, setSelectedFolder] = useState(demoTree[0]);
+
   return (
     <div className="navigator">
       <SplitView
         left={
           <div>
-            <TreeView data={demoTree} />
+            <TreeView
+              data={demoTree}
+              selectedId={selectedFolder?.id}
+              onSelect={setSelectedFolder}
+            />
           </div>
         }
         right={
-          <div>
-            <h3>Правая колонка</h3>
-            <p>Основной контент справа.</p>
-          </div>
+          <section
+            className="navigator__content-shell"
+            aria-label="Контейнер содержимого"
+          >
+            <FileExplorer
+              directory={selectedFolder}
+              files={selectedFolder?.children ?? []}
+            />
+          </section>
         }
       />
     </div>

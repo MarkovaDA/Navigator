@@ -15,27 +15,35 @@ const treeIconSx = {
   flexShrink: 0,
 };
 
-function TreeNode({ node, level = 0 }) {
+function TreeNode({ node, level = 0, selectedId, onSelect }) {
   const children = Array.isArray(node.children) ? node.children : [];
   const hasChildren = children.length > 0;
   const [isOpen, setIsOpen] = useState(true);
+  const isSelected = node.id != null && node.id === selectedId;
+
+  const handleActivate = () => {
+    if (hasChildren) {
+      setIsOpen((value) => !value);
+    }
+    onSelect?.(node);
+  };
 
   return (
     <li className="tree-view__item" role="none">
       <div
-        className={`tree-view__row${hasChildren ? " tree-view__row--clickable" : ""}`}
-        onClick={() => hasChildren && setIsOpen((value) => !value)}
+        className={`tree-view__row${hasChildren ? " tree-view__row--clickable" : ""}${isSelected ? " tree-view__row--selected" : ""}`}
+        onClick={handleActivate}
         onKeyDown={(e) => {
-          if (!hasChildren) return;
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            setIsOpen((value) => !value);
+            handleActivate();
           }
         }}
         style={{ "--tree-level": level }}
         role="treeitem"
         tabIndex={0}
         aria-expanded={hasChildren ? isOpen : undefined}
+        aria-selected={isSelected}
       >
         <span className="tree-view__toggle" aria-hidden="true">
           {hasChildren ? (
@@ -65,6 +73,8 @@ function TreeNode({ node, level = 0 }) {
               key={child.id ?? `${child.name ?? "folder"}-${index}`}
               node={child}
               level={level + 1}
+              selectedId={selectedId}
+              onSelect={onSelect}
             />
           ))}
         </ul>
@@ -73,7 +83,7 @@ function TreeNode({ node, level = 0 }) {
   );
 }
 
-function TreeView({ data }) {
+function TreeView({ data, selectedId, onSelect }) {
   const nodes = normalizeNodes(data);
 
   if (nodes.length === 0) {
@@ -83,7 +93,12 @@ function TreeView({ data }) {
   return (
     <ul className="tree-view__list tree-view__root" role="tree">
       {nodes.map((node, index) => (
-        <TreeNode key={node.id ?? `${node.name ?? "folder"}-${index}`} node={node} />
+        <TreeNode
+          key={node.id ?? `${node.name ?? "folder"}-${index}`}
+          node={node}
+          selectedId={selectedId}
+          onSelect={onSelect}
+        />
       ))}
     </ul>
   );

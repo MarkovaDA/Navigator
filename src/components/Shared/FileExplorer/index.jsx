@@ -1,13 +1,17 @@
 import { TreeNodeLeadingIcon } from "@/utils/treeIcons";
-import { normalizeFiles, handleAddFile } from "@/utils/fileService";
+import { normalizeFiles, handleAddFile, handleAddFolder } from "@/utils/fileService";
 import "./FileExplorer.css";
 
-function FileExplorer({ directory = null, files = [], onAddFile }) {
+function FileExplorer({ directory = null, files = [], onAddFile, onAddFolder }) {
   const items = normalizeFiles(files);
   const title = directory?.name ? `Папка: ${directory.name}` : "Папка не выбрана";
 
   const onAddFileClick = () => {
     handleAddFile(directory, onAddFile);
+  };
+
+  const onAddFolderClick = () => {
+    handleAddFolder(directory, onAddFolder);
   };
 
   if (items.length === 0) {
@@ -16,14 +20,24 @@ function FileExplorer({ directory = null, files = [], onAddFile }) {
         <div className="file-explorer__directory">
           <span>{title}</span>
           { directory && (
-            <button
-              className="file-explorer__add-button"
-              onClick={onAddFileClick}
-              title="Добавить новый файл"
-              aria-label="Добавить новый файл"
-            >
-              +
-            </button>
+            <div className="file-explorer__actions">
+              <button
+                className="file-explorer__add-button"
+                onClick={onAddFileClick}
+                title="Добавить новый файл"
+                aria-label="Добавить новый файл"
+              >
+                +
+              </button>
+              <button
+                className="file-explorer__add-button file-explorer__add-button--folder"
+                onClick={onAddFolderClick}
+                title="Добавить новую папку"
+                aria-label="Добавить новую папку"
+              >
+                Добавить папку
+              </button>
+            </div>
           )}
         </div>
         <p className="file-explorer__empty">
@@ -38,14 +52,24 @@ function FileExplorer({ directory = null, files = [], onAddFile }) {
       <div className="file-explorer__directory">
         <span>{title}</span>
         {directory && (
-          <button
-            className="file-explorer__add-button"
-            onClick={onAddFileClick}
-            title="Добавить новый файл"
-            aria-label="Добавить новый файл"
-          >
-            Добавить файл
-          </button>
+          <div className="file-explorer__actions">
+            <button
+              className="file-explorer__add-button"
+              onClick={onAddFileClick}
+              title="Добавить новый файл"
+              aria-label="Добавить новый файл"
+            >
+              Добавить файл
+            </button>
+            <button
+              className="file-explorer__add-button file-explorer__add-button--folder"
+              onClick={onAddFolderClick}
+              title="Добавить новую папку"
+              aria-label="Добавить новую папку"
+            >
+              Добавить папку
+            </button>
+          </div>
         )}
       </div>
       <ul className="file-explorer__tiles" role="list">
@@ -54,6 +78,8 @@ function FileExplorer({ directory = null, files = [], onAddFile }) {
 
           const hasChildren =
             Array.isArray(file.children) && file.children.length > 0;
+          const isFolderItem =
+            file?.isFolder === true || Array.isArray(file?.children);
 
           return (
             <li
@@ -66,7 +92,7 @@ function FileExplorer({ directory = null, files = [], onAddFile }) {
                 <span className="file-explorer__tile-icon" aria-hidden>
                   <TreeNodeLeadingIcon
                     node={file}
-                    hasChildren={hasChildren}
+                    hasChildren={isFolderItem || hasChildren}
                     isOpen={false}
                   />
                 </span>

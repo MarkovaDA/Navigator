@@ -2,6 +2,7 @@ import { useState } from "react";
 import SplitView from "../Shared/SplitView";
 import TreeView from "../Shared/TreeView";
 import FileExplorer from "../Shared/FileExplorer";
+import { findNodeById, addFileToFolder, addFolderToFolder } from "@/utils/fileService";
 import "./Navigator.css";
 
 const demoTree = [
@@ -111,53 +112,6 @@ const demoTree = [
   },
 ];
 
-function findNodeById(nodes, targetId) {
-  if (!Array.isArray(nodes) || !targetId) return null;
-
-  for (const node of nodes) {
-    if (node?.id === targetId) {
-      return node;
-    }
-
-    const foundInChildren = findNodeById(node?.children, targetId);
-    if (foundInChildren) {
-      return foundInChildren;
-    }
-  }
-
-  return null;
-}
-
-function addFileToFolder(nodes, folderId, fileName) {
-  if (!Array.isArray(nodes)) return nodes;
-
-  return nodes.map((node) => {
-    if (node?.id === folderId) {
-      const nextChildren = Array.isArray(node.children) ? node.children : [];
-      
-      return {
-        ...node,
-        children: [
-          ...nextChildren,
-          {
-            id: `file-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-            name: fileName,
-          },
-        ],
-      };
-    }
-
-    if (!Array.isArray(node?.children)) {
-      return node;
-    }
-
-    return {
-      ...node,
-      children: addFileToFolder(node.children, folderId, fileName),
-    };
-  });
-}
-
 function Navigator() {
   const [treeData, setTreeData] = useState(demoTree);
   const [selectedFolderId, setSelectedFolderId] = useState(demoTree[0]?.id ?? null);
@@ -171,7 +125,8 @@ function Navigator() {
     const fileName = rawFileName.trim();
     const currentChildren = Array.isArray(selectedFolder?.children)
       ? selectedFolder.children
-      : [];
+      : []; 
+
     const alreadyExists = currentChildren.some(
       (item) => item?.name?.toLowerCase() === fileName.toLowerCase()
     );
@@ -182,6 +137,28 @@ function Navigator() {
     }
 
     setTreeData((prevTreeData) => addFileToFolder(prevTreeData, selectedFolder?.id, fileName));
+    return true;
+  };
+
+  const handleAddFolder = (rawFolderName) => {
+    const folderName = rawFolderName.trim();
+    const currentChildren = Array.isArray(selectedFolder?.children)
+      ? selectedFolder.children
+      : [];
+
+    const alreadyExists = currentChildren.some(
+      (item) => item?.name?.toLowerCase() === folderName.toLowerCase()
+    );
+
+    if (alreadyExists) {
+      window.alert("Папка с таким названием уже существует в выбранной папке.");
+      return false;
+    }
+
+    setTreeData((prevTreeData) =>
+      addFolderToFolder(prevTreeData, selectedFolder?.id, folderName)
+    );
+
     return true;
   };
 
@@ -206,6 +183,7 @@ function Navigator() {
               directory={selectedFolder}
               files={selectedFolder?.children ?? []}
               onAddFile={handleAddFile}
+              onAddFolder={handleAddFolder}
             />
           </section>
         }

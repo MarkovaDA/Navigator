@@ -18,6 +18,7 @@ const treeIconSx = {
 function TreeNode({ node, level = 0, selectedId, onSelect }) {
   const children = Array.isArray(node.children) ? node.children : [];
   const hasChildren = children.length > 0;
+  const isFolderNode = node?.isFolder === true || Array.isArray(node?.children);
   const [isOpen, setIsOpen] = useState(true);
   const isSelected = node.id != null && node.id === selectedId;
 
@@ -59,7 +60,7 @@ function TreeNode({ node, level = 0, selectedId, onSelect }) {
         <span className="tree-view__icon-wrap" aria-hidden="true">
           <TreeNodeLeadingIcon
             node={node}
-            hasChildren={hasChildren}
+            hasChildren={isFolderNode || hasChildren}
             isOpen={isOpen}
           />
         </span>

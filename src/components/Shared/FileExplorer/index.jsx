@@ -1,28 +1,13 @@
 import { TreeNodeLeadingIcon } from "@/utils/treeIcons";
+import { normalizeFiles, handleAddFile } from "@/utils/fileService";
 import "./FileExplorer.css";
-
-function normalizeFiles(files) {
-  if (files == null) return [];
-  return Array.isArray(files) ? files : [];
-}
 
 function FileExplorer({ directory = null, files = [], onAddFile }) {
   const items = normalizeFiles(files);
   const title = directory?.name ? `Папка: ${directory.name}` : "Папка не выбрана";
 
-  const handleAddFile = () => {
-    if (!directory || typeof onAddFile !== "function") return;
-
-    const fileName = window.prompt("Введите название нового файла:");
-    if (fileName == null) return;
-
-    const trimmedFileName = fileName.trim();
-    if (!trimmedFileName) {
-      window.alert("Название файла не может быть пустым.");
-      return;
-    }
-
-    onAddFile(trimmedFileName);
+  const onAddFileClick = () => {
+    handleAddFile(directory, onAddFile);
   };
 
   if (items.length === 0) {
@@ -33,7 +18,7 @@ function FileExplorer({ directory = null, files = [], onAddFile }) {
           { directory && (
             <button
               className="file-explorer__add-button"
-              onClick={handleAddFile}
+              onClick={onAddFileClick}
               title="Добавить новый файл"
               aria-label="Добавить новый файл"
             >
@@ -55,7 +40,7 @@ function FileExplorer({ directory = null, files = [], onAddFile }) {
         {directory && (
           <button
             className="file-explorer__add-button"
-            onClick={handleAddFile}
+            onClick={onAddFileClick}
             title="Добавить новый файл"
             aria-label="Добавить новый файл"
           >

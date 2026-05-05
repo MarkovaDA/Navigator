@@ -6,14 +6,41 @@ function normalizeFiles(files) {
   return Array.isArray(files) ? files : [];
 }
 
-function FileExplorer({ directory = null, files = [] }) {
+function FileExplorer({ directory = null, files = [], onAddFile }) {
   const items = normalizeFiles(files);
   const title = directory?.name ? `Папка: ${directory.name}` : "Папка не выбрана";
+
+  const handleAddFile = () => {
+    if (!directory || typeof onAddFile !== "function") return;
+
+    const fileName = window.prompt("Введите название нового файла:");
+    if (fileName == null) return;
+
+    const trimmedFileName = fileName.trim();
+    if (!trimmedFileName) {
+      window.alert("Название файла не может быть пустым.");
+      return;
+    }
+
+    onAddFile(trimmedFileName);
+  };
 
   if (items.length === 0) {
     return (
       <div className="file-explorer file-explorer--empty" role="region" aria-label="Файлы">
-        <div className="file-explorer__directory">{title}</div>
+        <div className="file-explorer__directory">
+          <span>{title}</span>
+          { directory && (
+            <button
+              className="file-explorer__add-button"
+              onClick={handleAddFile}
+              title="Добавить новый файл"
+              aria-label="Добавить новый файл"
+            >
+              +
+            </button>
+          )}
+        </div>
         <p className="file-explorer__empty">
           { directory ? "В выбранной папке нет элементов." : "Нет файлов для отображения."}
         </p>
@@ -23,7 +50,19 @@ function FileExplorer({ directory = null, files = [] }) {
 
   return (
     <div className="file-explorer" role="region" aria-label="Файлы">
-      <div className="file-explorer__directory">{title}</div>
+      <div className="file-explorer__directory">
+        <span>{title}</span>
+        {directory && (
+          <button
+            className="file-explorer__add-button"
+            onClick={handleAddFile}
+            title="Добавить новый файл"
+            aria-label="Добавить новый файл"
+          >
+            Добавить файл
+          </button>
+        )}
+      </div>
       <ul className="file-explorer__tiles" role="list">
         {items.map((file, index) => {
           const key = file.id ?? `${file.name ?? "item"}-${index}`;
@@ -32,7 +71,12 @@ function FileExplorer({ directory = null, files = [] }) {
             Array.isArray(file.children) && file.children.length > 0;
 
           return (
-            <li key={key} className="file-explorer__tile" role="listitem">
+            <li
+              key={key}
+              className="file-explorer__tile"
+              role="listitem"
+              style={{ "--file-explorer-tile-delay": `${Math.min(index * 42, 420)}ms` }}
+            >
               <div className="file-explorer__tile-body">
                 <span className="file-explorer__tile-icon" aria-hidden>
                   <TreeNodeLeadingIcon

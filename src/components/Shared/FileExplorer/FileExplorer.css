@@ -1,4 +1,6 @@
 .file-explorer {
+  position: relative;
+  display: block;
   box-sizing: border-box;
   width: 100%;
   min-height: 120px;
@@ -6,9 +8,10 @@
 }
 
 .file-explorer--empty {
-  display: flex;
+  display: block;
   align-items: center;
   justify-content: center;
+  text-align: center;
   min-height: 160px;
 }
 
@@ -39,6 +42,14 @@
     0 0 0 1px rgba(255, 255, 255, 0.5) inset;
 }
 
+.file-explorer__directory {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 14px;
+}
+
 .file-explorer__directory::before {
   content: "";
   position: absolute;
@@ -51,7 +62,74 @@
   box-shadow: 2px 0 8px rgba(25, 118, 210, 0.25);
 }
 
+.file-explorer__add-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 118px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(25, 118, 210, 0.3);
+  background: rgba(25, 118, 210, 0.08);
+  color: #1976d2;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+  flex-shrink: 0;
+}
+
+.file-explorer__add-button::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(25, 118, 210, 0.18);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+}
+
+.file-explorer__add-button:active::after {
+  width: 220px;
+  height: 220px;
+  opacity: 1;
+  transition: width 0s ease, height 0s ease, opacity 0.4s ease;
+}
+
+.file-explorer__add-button:hover {
+  background: rgba(25, 118, 210, 0.14);
+  border-color: rgba(25, 118, 210, 0.45);
+  box-shadow: 0 4px 10px rgba(25, 118, 210, 0.16);
+  transform: translateY(-1px);
+}
+
+.file-explorer__add-button:active {
+  transform: translateY(0);
+}
+
+.file-explorer__add-button:focus {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(25, 118, 210, 0.12),
+    0 4px 12px rgba(25, 118, 210, 0.2);
+}
+
 .file-explorer--empty .file-explorer__directory {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 32px;
   padding: 38px 28px 42px;
   text-align: center;
@@ -70,6 +148,7 @@
 }
 
 .file-explorer__empty {
+  display: block;
   margin: 0;
   font-size: 14px;
   color: rgba(0, 0, 0, 0.45);
@@ -84,8 +163,31 @@
   list-style: none;
 }
 
+@keyframes file-explorer-tile-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .file-explorer__tile {
   list-style: none;
+  opacity: 0;
+  animation: file-explorer-tile-in 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--file-explorer-tile-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .file-explorer__tile {
+    opacity: 1;
+    animation: none;
+    transform: none;
+  }
 }
 
 .file-explorer__tile-body {

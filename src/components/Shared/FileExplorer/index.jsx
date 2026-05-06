@@ -1,15 +1,16 @@
 import { TreeNodeLeadingIcon } from "@/utils/treeIcons";
 import { normalizeFiles, handleAddFile, handleAddFolder } from "@/utils/fileService";
 
-import ContextMenu from "./ContextMenu";
+import ContextMenu from "./ContextMenu/index.jsx";
 import useContextMenu from "./ContextMenu/useContextMenu";
+
 import "./FileExplorer.css";
 
 function FileExplorer({ directory = null, files = [], onAddFile, onAddFolder }) {
   const items = normalizeFiles(files);
   const title = directory?.name ? `Папка: ${directory.name}` : "Папка не выбрана";
   const helperText = "Используйте контекстное меню для создания папки или файла";
-  
+
   const { contextMenu, onContextMenuOpen, closeContextMenu } = useContextMenu(Boolean(directory));
 
   const onAddFileClick = () => {

@@ -9,13 +9,14 @@ function SplitView({ left, right, initialLeftWidth = 280, minLeft = 180, minRigh
     startX: 0,
     startWidth: initialLeftWidth,
   });
-
+  
   const onMouseDown = (event) => {
     dragStateRef.current = {
       dragging: true,
       startX: event.clientX,
       startWidth: leftWidth,
     };
+
     document.body.style.cursor = "col-resize";
     document.body.style.userSelect = "none";
   };

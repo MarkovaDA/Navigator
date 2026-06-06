@@ -39,6 +39,9 @@ jobs:
         env:
           VITE_BASE_PATH: /Navigator/
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
